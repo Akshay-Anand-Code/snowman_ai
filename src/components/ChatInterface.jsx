@@ -1,23 +1,89 @@
-import { useState } from 'react';
-import { Send } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { Send, Terminal } from 'lucide-react';
+
+const MatrixRain = () => {
+  const characters = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789";
+  const [columns, setColumns] = useState([]);
+  const requestRef = useRef();
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const context = canvas.getContext('2d');
+    
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const fontSize = 14;
+      const columns = Math.floor(canvas.width / fontSize);
+      setColumns(Array.from({ length: columns }, () => 0));
+    };
+
+    resize();
+    window.addEventListener('resize', resize);
+
+    const matrix = () => {
+      context.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      
+      context.fillStyle = '#0F0';
+      context.font = '14px monospace';
+
+      setColumns(prev => prev.map((y, i) => {
+        const char = characters[Math.floor(Math.random() * characters.length)];
+        const x = i * 14;
+        context.fillText(char, x, y);
+
+        if (y > canvas.height && Math.random() > 0.98) {
+          return 0;
+        }
+        return y + 14;
+      }));
+
+      requestRef.current = requestAnimationFrame(matrix);
+    };
+
+    requestRef.current = requestAnimationFrame(matrix);
+
+    return () => {
+      window.removeEventListener('resize', resize);
+      cancelAnimationFrame(requestRef.current);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="fixed top-0 left-0 w-full h-full pointer-events-none opacity-20"
+    />
+  );
+};
 
 export default function ChatInterface() {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const sendMessage = async (e) => {
     e.preventDefault();
     if (!inputMessage.trim()) return;
 
-    // Add user message to chat
     const userMessage = { user: 'User', text: inputMessage };
     setMessages(prev => [...prev, userMessage]);
     setIsLoading(true);
 
     try {
       const response = await fetch(
-        'https://eliza-starter-2.onrender.com/b850bc30-45f8-0041-a00a-83df46d8555d/message',
+        'https://eliza-starter-07uw.onrender.com/964d1ca6-29f9-00e0-b2c6-b16caf5bbed7/message',
         {
           method: 'POST',
           headers: {
@@ -35,7 +101,7 @@ export default function ChatInterface() {
       setMessages(prev => [...prev, ...data]);
     } catch (error) {
       console.error('Error:', error);
-      setMessages(prev => [...prev, { user: 'System', text: 'Error sending message' }]);
+      setMessages(prev => [...prev, { user: 'System', text: 'Error: Connection terminated' }]);
     }
 
     setInputMessage('');
@@ -43,46 +109,71 @@ export default function ChatInterface() {
   };
 
   return (
-    <div className="flex flex-col h-screen max-w-2xl mx-auto p-4">
-      <div className="flex-1 overflow-auto mb-4 space-y-4">
-        {messages.map((message, index) => (
-          <div
-            key={index}
-            className={`p-3 rounded-lg max-w-[80%] ${
-              message.user === 'User'
-                ? 'ml-auto bg-blue-500 text-white'
-                : 'bg-gray-200 text-gray-800'
-            }`}
-          >
-            <div className="font-bold mb-1">{message.user}</div>
-            <div>{message.text}</div>
-          </div>
-        ))}
-        {isLoading && (
-          <div className="p-3 rounded-lg bg-gray-200 text-gray-800 max-w-[80%]">
-            <div className="font-bold mb-1">Eliza</div>
-            <div>Typing...</div>
-          </div>
-        )}
-      </div>
+    <div className="fixed inset-0 w-full h-full bg-gray-900 flex items-center justify-center overflow-hidden">
+      <MatrixRain />
+      
+      <div className="relative w-[90%] max-w-2xl h-[90vh] bg-black/90 rounded-lg border border-green-500 
+                    shadow-lg shadow-green-500/20 overflow-hidden backdrop-blur-sm z-10">
+        {/* Terminal Header */}
+        <div className="absolute top-0 left-0 right-0 bg-green-900/20 p-2 border-b border-green-500 flex items-center">
+          <Terminal className="w-5 h-5 text-green-500 mr-2" />
+          <span className="text-green-500 font-mono text-sm">MATRIX TERMINAL v1.0.0</span>
+        </div>
 
-      <form onSubmit={sendMessage} className="flex gap-2">
-        <input
-          type="text"
-          value={inputMessage}
-          onChange={(e) => setInputMessage(e.target.value)}
-          placeholder="Type your message..."
-          className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          disabled={isLoading}
-        />
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-blue-300"
-        >
-          <Send className="w-5 h-5" />
-        </button>
-      </form>
+        {/* Chat Container */}
+        <div className="h-full pt-12 pb-16 flex flex-col">
+          {/* Messages Area */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-green-500 scrollbar-track-gray-900">
+            {messages.map((message, index) => (
+              <div
+                key={index}
+                className={`p-3 rounded backdrop-blur-sm ${
+                  message.user === 'User'
+                    ? 'ml-auto max-w-[80%] bg-green-500/10 border border-green-500'
+                    : 'max-w-[80%] bg-black/80 border border-green-500/50'
+                }`}
+              >
+                <div className="font-mono text-sm text-green-300 mb-1">
+                  {message.user === 'User' ? '>' : '$'} {message.user}
+                </div>
+                <div className="font-mono text-green-500 break-words">{message.text}</div>
+              </div>
+            ))}
+            {isLoading && (
+              <div className="p-3 rounded bg-black/80 border border-green-500/50 max-w-[80%]">
+                <div className="font-mono text-sm text-green-300 mb-1">$ System</div>
+                <div className="font-mono text-green-500 animate-pulse">Processing request...</div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+
+          {/* Input Area */}
+          <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-green-500 bg-black/90">
+            <form onSubmit={sendMessage} className="flex gap-2">
+              <input
+                type="text"
+                value={inputMessage}
+                onChange={(e) => setInputMessage(e.target.value)}
+                placeholder="Enter command..."
+                className="flex-1 p-2 rounded bg-black/80 border border-green-500/50 
+                         text-green-500 placeholder-green-700 font-mono text-sm
+                         focus:outline-none focus:border-green-400 focus:ring-1 focus:ring-green-500"
+                disabled={isLoading}
+              />
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="p-2 bg-green-500/10 border border-green-500 text-green-500 
+                         rounded hover:bg-green-500/20 disabled:opacity-50 
+                         disabled:hover:bg-green-500/10 transition-colors duration-200"
+              >
+                <Send className="w-5 h-5" />
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
