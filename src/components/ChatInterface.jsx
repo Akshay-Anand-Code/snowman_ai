@@ -179,7 +179,7 @@ const ChatInterface = () => {
           </a>
           
           {/* LinkedIn */}
-          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer"
+          <a href="https://x.com/grimbleITX/" target="_blank" rel="noopener noreferrer"
              className="text-green-500 hover:text-green-400 transition-colors">
             <img 
               src="/twitter.PNG"
