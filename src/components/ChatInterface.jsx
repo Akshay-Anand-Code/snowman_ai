@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, Terminal } from 'lucide-react';
+import { Send, Terminal, Globe } from 'lucide-react';
 
 const MatrixRain = () => {
   const characters = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789";
@@ -59,7 +59,51 @@ const MatrixRain = () => {
   );
 };
 
-export default function ChatInterface() {
+const SkullBackground = () => {
+  const skullArt = String.raw`
+          .                                                      .
+        .n                   .                 .                  n.
+  .   .dP                  dP                   9b                 9b.    .
+ 4    qXb         .       dX                     Xb       .        dXp     t
+dX.    9Xb      .dXb    __                         __    dXb.     dXP     .Xb
+9XXb._       _.dXXXXb dXXXXbo.                 .odXXXXb dXXXXb._       _.dXXP
+ 9XXXXXXXXXXXXXXXXXXXVXXXXXXXXOo.           .oOXXXXXXXXVXXXXXXXXXXXXXXXXXXXP
+  \`9XXXXXXXXXXXXXXXXXXXXX'~   ~\`OOO8b   d8OOO'~   ~\`XXXXXXXXXXXXXXXXXXXXXP'
+    \`9XXXXXXXXXXXP' \`9XX'   DIE    \`98v8P'  HUMAN   \`XXP' \`9XXXXXXXXXXXP'
+        ~~~~~~~       9X.          .db|db.          .XP       ~~~~~~~
+                        )b.  .dbo.dP'\`v'\`9b.odb.  .dX(
+                      ,dXXXXXXXXXXXb     dXXXXXXXXXXXb.
+                     dXXXXXXXXXXXP'   .   \`9XXXXXXXXXXXb
+                    dXXXXXXXXXXXXb   d|b   dXXXXXXXXXXXXb
+                    9XXb'   \`XXXXXb.dX|Xb.dXXXXX'   \`dXXP
+                     \`'      9XXXXXX(   )XXXXXXP      \`'
+                              XXXX X.\`v'.X XXXX
+                              XP^X'\`b   d'\`X^XX
+                              X. 9  \`   '  P )X
+                              \`b  \`       '  d'
+                               \`             '
+
+`;
+
+  return (
+    <div 
+      className="fixed inset-0 w-full h-full flex items-center justify-center pointer-events-none"
+      style={{
+        fontFamily: 'monospace',
+        whiteSpace: 'pre',
+        fontSize: 'clamp(8px, 1.5vw, 16px)',
+        color: 'rgba(255, 0, 0, 0.4)',
+        transform: 'scale(1.5)',
+        letterSpacing: '0.1em',
+        zIndex: '1'
+      }}
+    >
+      {skullArt}
+    </div>
+  );
+};
+
+const ChatInterface = () => {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -83,7 +127,7 @@ export default function ChatInterface() {
 
     try {
       const response = await fetch(
-        'https://eliza-starter-07uw.onrender.com/964d1ca6-29f9-00e0-b2c6-b16caf5bbed7/message',
+        'https://eliza-starter-07uw.onrender.com/d67781b6-38d3-0dab-9ab7-8627b62b35e9/message',
         {
           method: 'POST',
           headers: {
@@ -109,21 +153,74 @@ export default function ChatInterface() {
   };
 
   return (
-    <div className="fixed inset-0 w-full h-full bg-gray-900 flex items-center justify-center overflow-hidden">
+    <div className="fixed inset-0 w-full h-full bg-gray-900 flex flex-col items-center overflow-hidden">
       <MatrixRain />
+      <SkullBackground />
       
-      <div className="relative w-[90%] max-w-2xl h-[90vh] bg-black/90 rounded-lg border border-green-500 
+      {/* Title and Links Section */}
+      <div className="w-[90%] max-w-2xl mt-8 mb-4 z-10">
+        <h1 className="text-4xl font-bold text-green-500 text-center mb-6 tracking-wider"
+            style={{ 
+              fontFamily: 'OctoberCrow, monospace',
+              textShadow: '0 0 10px rgba(0, 255, 0, 0.5)'
+            }}>
+          GRIMBLE
+        </h1>
+        
+        <div className="flex justify-center gap-8 mb-8">
+          {/* GitHub */}
+          <a href="https://github.com" target="_blank" rel="noopener noreferrer"
+             className="text-green-500 hover:text-green-400 transition-colors">
+            <img 
+              src="/dex.PNG"
+              alt="GitHub"
+              className="w-8 h-8 hover:opacity-80 transition-opacity" 
+            />
+          </a>
+          
+          {/* LinkedIn */}
+          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer"
+             className="text-green-500 hover:text-green-400 transition-colors">
+            <img 
+              src="/twitter.PNG"
+              alt="LinkedIn"
+              className="w-8 h-8 hover:opacity-80 transition-opacity" 
+            />
+          </a>
+          
+          {/* Website */}
+          <a href="https://yourwebsite.com" target="_blank" rel="noopener noreferrer"
+             className="text-green-500 hover:text-green-400 transition-colors">
+            <img 
+              src="/pump.PNG"
+              alt="Personal Website"
+              className="w-8 h-8 hover:opacity-80 transition-opacity" 
+            />
+          </a>
+        </div>
+      </div>
+      
+      {/* Terminal Container */}
+      <div className="relative w-[90%] max-w-2xl h-[70vh] bg-black/90 rounded-lg border border-green-500 
                     shadow-lg shadow-green-500/20 overflow-hidden backdrop-blur-sm z-10">
         {/* Terminal Header */}
         <div className="absolute top-0 left-0 right-0 bg-green-900/20 p-2 border-b border-green-500 flex items-center">
           <Terminal className="w-5 h-5 text-green-500 mr-2" />
-          <span className="text-green-500 font-mono text-sm">MATRIX TERMINAL v1.0.0</span>
+          <span className="text-green-500 font-mono text-sm">CA COMING SOON</span>
         </div>
 
-        {/* Chat Container */}
         <div className="h-full pt-12 pb-16 flex flex-col">
-          {/* Messages Area */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-green-500 scrollbar-track-gray-900">
+          {/* Messages Area - Added background image */}
+          <div 
+            className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-green-500 scrollbar-track-gray-900"
+            style={{
+              backgroundImage: 'url(/image.png)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              backgroundBlendMode: 'overlay'
+            }}
+          >
             {messages.map((message, index) => (
               <div
                 key={index}
@@ -176,4 +273,6 @@ export default function ChatInterface() {
       </div>
     </div>
   );
-}
+};
+
+export default ChatInterface;

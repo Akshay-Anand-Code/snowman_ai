@@ -2,8 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'OctoberCrow';
+  src: url('/fonts/October Crow.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'CamingoCode';
+  src: url('/fonts/CamingoCode-Bold.ttf') format('truetype');
+  font-weight: bold;
+}
+
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'OctoberCrow', Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
