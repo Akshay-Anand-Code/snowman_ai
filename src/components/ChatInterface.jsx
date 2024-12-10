@@ -169,7 +169,7 @@ const ChatInterface = () => {
         
         <div className="flex justify-center gap-8 mb-2">
           {/* GitHub */}
-          <a href="https://github.com" target="_blank" rel="noopener noreferrer"
+          <a href="https://pump.fun/coin/6VxrPiveow91XZLnod3fYhQVpUrXFSyPkXohhb1Cpump" target="_blank" rel="noopener noreferrer"
              className="text-green-500 hover:text-green-400 transition-colors">
             <img 
               src="/dex.PNG"
