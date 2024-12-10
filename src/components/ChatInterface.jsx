@@ -1,113 +1,13 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { Send, Terminal, Globe } from 'lucide-react';
-
-const MatrixRain = () => {
-  const characters = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789";
-  const [columns, setColumns] = useState([]);
-  const requestRef = useRef();
-  const canvasRef = useRef(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const context = canvas.getContext('2d');
-    
-    const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      const fontSize = 14;
-      const columns = Math.floor(canvas.width / fontSize);
-      setColumns(Array.from({ length: columns }, () => 0));
-    };
-
-    resize();
-    window.addEventListener('resize', resize);
-
-    const matrix = () => {
-      context.fillStyle = 'rgba(0, 0, 0, 0.05)';
-      context.fillRect(0, 0, canvas.width, canvas.height);
-      
-      context.fillStyle = '#0F0';
-      context.font = '14px monospace';
-
-      setColumns(prev => prev.map((y, i) => {
-        const char = characters[Math.floor(Math.random() * characters.length)];
-        const x = i * 14;
-        context.fillText(char, x, y);
-
-        if (y > canvas.height && Math.random() > 0.98) {
-          return 0;
-        }
-        return y + 14;
-      }));
-
-      requestRef.current = requestAnimationFrame(matrix);
-    };
-
-    requestRef.current = requestAnimationFrame(matrix);
-
-    return () => {
-      window.removeEventListener('resize', resize);
-      cancelAnimationFrame(requestRef.current);
-    };
-  }, []);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      className="fixed top-0 left-0 w-full h-full pointer-events-none opacity-20"
-    />
-  );
-};
-
-const SkullBackground = () => {
-  const skullArt = String.raw`
-          .                                                      .
-        .n                   .                 .                  n.
-  .   .dP                  dP                   9b                 9b.    .
- 4    qXb         .       dX                     Xb       .        dXp     t
-dX.    9Xb      .dXb    __                         __    dXb.     dXP     .Xb
-9XXb._       _.dXXXXb dXXXXbo.                 .odXXXXb dXXXXb._       _.dXXP
- 9XXXXXXXXXXXXXXXXXXXVXXXXXXXXOo.           .oOXXXXXXXXVXXXXXXXXXXXXXXXXXXXP
-  \`9XXXXXXXXXXXXXXXXXXXXX'~   ~\`OOO8b   d8OOO'~   ~\`XXXXXXXXXXXXXXXXXXXXXP'
-    \`9XXXXXXXXXXXP' \`9XX'   DIE    \`98v8P'  HUMAN   \`XXP' \`9XXXXXXXXXXXP'
-        ~~~~~~~       9X.          .db|db.          .XP       ~~~~~~~
-                        )b.  .dbo.dP'\`v'\`9b.odb.  .dX(
-                      ,dXXXXXXXXXXXb     dXXXXXXXXXXXb.
-                     dXXXXXXXXXXXP'   .   \`9XXXXXXXXXXXb
-                    dXXXXXXXXXXXXb   d|b   dXXXXXXXXXXXXb
-                    9XXb'   \`XXXXXb.dX|Xb.dXXXXX'   \`dXXP
-                     \`'      9XXXXXX(   )XXXXXXP      \`'
-                              XXXX X.\`v'.X XXXX
-                              XP^X'\`b   d'\`X^XX
-                              X. 9  \`   '  P )X
-                              \`b  \`       '  d'
-                               \`             '
-
-`;
-
-  return (
-    <div 
-      className="fixed inset-0 w-full h-full flex items-center justify-center pointer-events-none"
-      style={{
-        fontFamily: 'monospace',
-        whiteSpace: 'pre',
-        fontSize: 'clamp(8px, 1.5vw, 16px)',
-        color: 'rgba(255, 0, 0, 0.4)',
-        transform: 'scale(1.5)',
-        letterSpacing: '0.1em',
-        zIndex: '1'
-      }}
-    >
-      {skullArt}
-    </div>
-  );
-};
 
 const ChatInterface = () => {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
+  const audioRef = useRef(null);
+  const [drops, setDrops] = useState([]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -116,6 +16,105 @@ const ChatInterface = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  useEffect(() => {
+    const createBat = (x, y) => {
+      const bat = document.createElement('div');
+      bat.className = 'glitter-bat';
+      bat.style.left = `${x}px`;
+      bat.style.top = `${y}px`;
+      document.body.appendChild(bat);
+
+      setTimeout(() => {
+        bat.remove();
+      }, 1000);
+    };
+
+    const handleMouseMove = (e) => {
+      createBat(e.clientX, e.clientY);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, []);
+
+  useEffect(() => {
+    const initAudio = async () => {
+      if (!audioRef.current) return;
+
+      audioRef.current.volume = 0.3;
+      audioRef.current.loop = true;
+
+      const playAudio = async () => {
+        try {
+          await audioRef.current.play();
+        } catch (err) {
+          setTimeout(playAudio, 1000);
+        }
+      };
+
+      playAudio();
+
+      return () => {
+        if (audioRef.current) {
+          audioRef.current.pause();
+          audioRef.current.currentTime = 0;
+        }
+      };
+    };
+
+    initAudio();
+  }, []);
+
+  useEffect(() => {
+    const createDrop = () => {
+      const positions = [
+        { x: window.innerWidth * 0.05 },  // Keep only far left
+        { x: window.innerWidth * 0.95 }   // Keep only far right
+      ];
+      
+      const newDrops = positions.flatMap(position => {
+        const count = 1 + Math.random() * 2; // 1-3 drops per position
+        return Array.from({ length: count }, () => ({
+          id: Math.random(),
+          x: position.x + (Math.random() * 10 - 5),
+          y: 0,
+          speed: 2 + Math.random() * 2,
+          opacity: 0.8 + Math.random() * 0.2,
+          width: 1 + Math.random() * 2
+        }));
+      });
+      
+      setDrops(prev => [...prev, ...newDrops]);
+      
+      // Remove drops when they reach bottom
+      setTimeout(() => {
+        newDrops.forEach(drop => {
+          setDrops(prev => prev.filter(d => d.id !== drop.id));
+        });
+      }, 8000); // Longer duration for full screen travel
+    };
+    
+    const interval = setInterval(createDrop, 100);
+    return () => clearInterval(interval);
+  }, []);
+  
+  useEffect(() => {
+    const animate = () => {
+      setDrops(prev => prev.map(drop => ({
+        ...drop,
+        y: drop.y + drop.speed,
+        opacity: drop.y > window.innerHeight ? 0 : drop.opacity
+      })));
+      requestAnimationFrame(animate);
+    };
+    
+    const animation = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animation);
+  }, []);
 
   const sendMessage = async (e) => {
     e.preventDefault();
@@ -127,7 +126,7 @@ const ChatInterface = () => {
 
     try {
       const response = await fetch(
-        'https://eliza-starter-07uw.onrender.com/d67781b6-38d3-0dab-9ab7-8627b62b35e9/message',
+        'https://eliza-starter-07uw.onrender.com/ce5d1752-cd9c-0bc7-b5c8-119d95e47844/message',
         {
           method: 'POST',
           headers: {
@@ -154,86 +153,148 @@ const ChatInterface = () => {
 
   return (
     <div className="fixed inset-0 w-full h-full bg-gray-900 flex flex-col items-center overflow-hidden">
-      <MatrixRain />
-      <SkullBackground />
+      <BloodTears />
+      <audio
+        ref={audioRef}
+        loop
+        autoPlay
+        preload="auto"
+        playsInline
+        className="hidden"
+      >
+        <source src="/whisper.mp3" type="audio/mpeg" />
+      </audio>
+
+      {/* Background Video Container */}
+      <div className="absolute inset-0 flex">
+        {/* Left Video */}
+        <div className="w-1/2 h-full overflow-hidden">
+          <video
+            autoPlay
+            loop
+            muted
+            className="w-full h-full object-cover"
+            style={{ 
+              transform: 'scaleX(-1)', // Mirror the left video
+              filter: 'grayscale(100%)' // Black and white filter
+            }}
+          >
+            <source src="/ascii.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+        
+        {/* Right Video */}
+        <div className="w-1/2 h-full overflow-hidden">
+          <video
+            autoPlay
+            loop
+            muted
+            className="w-full h-full object-cover"
+            style={{ 
+              filter: 'grayscale(100%)' // Black and white filter
+            }}
+          >
+            <source src="/ascii.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      </div>
       
-      {/* Title and Links Section */}
+      {/* Rest of your UI */}
       <div className="w-[90%] max-w-2xl mt-8 mb-4 z-10">
-        <h1 className="text-4xl font-bold text-green-500 text-center mb-6 tracking-wider"
+        <h1 className="text-4xl font-bold text-red-500 text-center mb-6 tracking-wider"
             style={{ 
               fontFamily: 'OctoberCrow, monospace',
-              textShadow: '0 0 10px rgba(0, 255, 0, 0.5)'
+              textShadow: '0 0 10px rgba(255, 0, 0, 0.5)'
             }}>
-          GRIMBLE
+          Varn
         </h1>
         
         <div className="flex justify-center gap-8 mb-2">
-          {/* GitHub */}
-          <a href="https://dexscreener.com/solana/gthyxioptpqnhyvz4utqzhtanrp25gqavixg5kystnkk" target="_blank" rel="noopener noreferrer"
+          <a href="https://dexscreener.com/solana/gthyxioptpqnhyvz4utqzhtanrp25gqavixg5kystnkk" 
+             target="_blank" 
+             rel="noopener noreferrer"
              className="text-green-500 hover:text-green-400 transition-colors">
             <img 
               src="/dex.PNG"
               alt="dex"
               className="w-8 h-8 hover:opacity-80 transition-opacity" 
+              style={{ 
+                filter: 'sepia(100%) hue-rotate(-50deg) saturate(200%) brightness(0.8)',
+                boxShadow: '0 0 10px rgba(255, 0, 0, 0.5)'
+              }}
             />
           </a>
           
-          {/* LinkedIn */}
-          <a href="https://x.com/grimbleITX/" target="_blank" rel="noopener noreferrer"
+          <a href="https://x.com/grimbleITX/" 
+             target="_blank" 
+             rel="noopener noreferrer"
              className="text-green-500 hover:text-green-400 transition-colors">
             <img 
               src="/twitter.PNG"
               alt="twitter"
-              className="w-8 h-8 hover:opacity-80 transition-opacity" 
+              className="w-8 h-8 hover:opacity-80 transition-opacity"
+              style={{ 
+                filter: 'sepia(100%) hue-rotate(-50deg) saturate(200%) brightness(0.8)',
+                boxShadow: '0 0 10px rgba(255, 0, 0, 0.5)'
+              }}
             />
           </a>
 
-          <a href="https://t.me/grimblesgraveyard" target="_blank" rel="noopener noreferrer"
+          <a href="https://t.me/grimblesgraveyard" 
+             target="_blank" 
+             rel="noopener noreferrer"
              className="text-green-500 hover:text-green-400 transition-colors">
             <img 
               src="/telegram.PNG"
               alt="Telegram"
-              className="w-8 h-8 hover:opacity-80 transition-opacity" 
+              className="w-8 h-8 hover:opacity-80 transition-opacity"
+              style={{ 
+                filter: 'sepia(100%) hue-rotate(-50deg) saturate(200%) brightness(0.8)',
+                boxShadow: '0 0 10px rgba(255, 0, 0, 0.5)'
+              }}
             />
           </a>
           
-          {/* Website */}
-          <a href="https://pump.fun/coin/6VxrPiveow91XZLnod3fYhQVpUrXFSyPkXohhb1Cpump" target="_blank" rel="noopener noreferrer"
+          <a href="https://pump.fun/coin/6VxrPiveow91XZLnod3fYhQVpUrXFSyPkXohhb1Cpump" 
+             target="_blank" 
+             rel="noopener noreferrer"
              className="text-green-500 hover:text-green-400 transition-colors">
             <img 
               src="/pump.PNG"
               alt="pump fun"
-              className="w-8 h-8 hover:opacity-80 transition-opacity" 
+              className="w-8 h-8 hover:opacity-80 transition-opacity"
+              style={{ 
+                filter: 'sepia(100%) hue-rotate(-50deg) saturate(200%) brightness(0.8)',
+                boxShadow: '0 0 10px rgba(255, 0, 0, 0.5)'
+              }}
             />
           </a>
         </div>
 
-        {/* Simple PDF Download Link */}
         <div className="text-center mb-4">
           <a
             href="/GrimbleWhitePaper.pdf"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-green-500 hover:text-green-400 underline transition-colors font-mono text-sm"
+            className="text-red-500 hover:text-red-400 underline transition-colors font-mono text-sm"
           >
             View Whitepaper
           </a>
         </div>
       </div>
       
-      {/* Terminal Container */}
-      <div className="relative w-[90%] max-w-2xl h-[70vh] bg-black/90 rounded-lg border border-green-500 
-                    shadow-lg shadow-green-500/20 overflow-hidden backdrop-blur-sm z-10">
-        {/* Terminal Header */}
-        <div className="absolute top-0 left-0 right-0 bg-green-900/20 p-2 border-b border-green-500 flex items-center">
-          <Terminal className="w-5 h-5 text-green-500 mr-2" />
-          <span className="text-green-500 font-mono text-sm">CA: 6VxrPiveow91XZLnod3fYhQVpUrXFSyPkXohhb1Cpump</span>
+      <div className="relative w-[90%] max-w-2xl h-[70vh] bg-black/90 rounded-lg border border-red-500 
+                    shadow-lg shadow-red-500/20 overflow-hidden backdrop-blur-sm z-10">
+        <div className="absolute top-0 left-0 right-0 bg-red-900/20 p-2 border-b border-red-500 flex items-center">
+          <Terminal className="w-5 h-5 text-red-500 mr-2" />
+          <span className="text-red-500 font-mono text-sm">CA: 6VxrPiveow91XZLnod3fYhQVpUrXFSyPkXohhb1Cpump</span>
         </div>
 
         <div className="h-full pt-12 pb-16 flex flex-col">
-          {/* Messages Area - Added background image */}
           <div 
-            className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-green-500 scrollbar-track-gray-900"
+            className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-red-500 scrollbar-track-gray-900"
             style={{
               backgroundImage: 'url(/image.png)',
               backgroundSize: 'cover',
@@ -245,46 +306,51 @@ const ChatInterface = () => {
             {messages.map((message, index) => (
               <div
                 key={index}
-                className={`p-3 rounded backdrop-blur-sm ${
+                className={`p-3 rounded backdrop-blur-sm w-full ${
                   message.user === 'User'
-                    ? 'ml-auto max-w-[80%] bg-green-500/10 border border-green-500'
-                    : 'max-w-[80%] bg-black/80 border border-green-500/50'
+                    ? 'bg-red-500/10 border border-red-500 text-right'
+                    : 'bg-black/80 border border-red-500/50 text-left'
                 }`}
               >
-                <div className="font-mono text-sm text-green-300 mb-1">
-                  {message.user === 'User' ? '>' : '$'} {message.user}
+                <div className={`font-mono text-sm mb-1 ${
+                  message.user === 'User' ? 'text-gray-200' : 'text-red-300'
+                }`}>
+                  {message.user === 'User' ? '> User' : '$ Varn'}
                 </div>
-                <div className="font-mono text-green-500 break-words">{message.text}</div>
+                <div className={`font-mono break-words ${
+                  message.user === 'User' ? 'text-white' : 'text-red-500'
+                }`}>
+                  {message.text}
+                </div>
               </div>
             ))}
             {isLoading && (
-              <div className="p-3 rounded bg-black/80 border border-green-500/50 max-w-[80%]">
-                <div className="font-mono text-sm text-green-300 mb-1">$ System</div>
-                <div className="font-mono text-green-500 animate-pulse">Processing request...</div>
+              <div className="p-3 rounded bg-black/80 border border-red-500/50 max-w-[80%]">
+                <div className="font-mono text-sm text-red-300 mb-1">$ System</div>
+                <div className="font-mono text-red-500 animate-pulse">Processing request...</div>
               </div>
             )}
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Input Area */}
-          <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-green-500 bg-black/90">
+          <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-red-500 bg-black/90">
             <form onSubmit={sendMessage} className="flex gap-2">
               <input
                 type="text"
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
-                placeholder="Enter command..."
-                className="flex-1 p-2 rounded bg-black/80 border border-green-500/50 
-                         text-green-500 placeholder-green-700 font-mono text-sm
-                         focus:outline-none focus:border-green-400 focus:ring-1 focus:ring-green-500"
+                placeholder="Talk with Varn..."
+                className="flex-1 p-2 rounded bg-black/80 border border-red-500/50 
+                         text-red-500 placeholder-red-700 font-mono text-sm
+                         focus:outline-none focus:border-red-400 focus:ring-1 focus:ring-red-500"
                 disabled={isLoading}
               />
               <button
                 type="submit"
                 disabled={isLoading}
-                className="p-2 bg-green-500/10 border border-green-500 text-green-500 
-                         rounded hover:bg-green-500/20 disabled:opacity-50 
-                         disabled:hover:bg-green-500/10 transition-colors duration-200"
+                className="p-2 bg-red-500/10 border border-red-500 text-red-500 
+                         rounded hover:bg-red-500/20 disabled:opacity-50 
+                         disabled:hover:bg-red-500/10 transition-colors duration-200"
               >
                 <Send className="w-5 h-5" />
               </button>
@@ -292,6 +358,95 @@ const ChatInterface = () => {
           </div>
         </div>
       </div>
+    </div>
+  );
+};
+
+const BloodTears = () => {
+  const [drops, setDrops] = useState([]);
+  const animationFrameRef = useRef();
+  const dropsRef = useRef(drops);
+  
+  // Update ref when drops change
+  useEffect(() => {
+    dropsRef.current = drops;
+  }, [drops]);
+  
+  useEffect(() => {
+    const createDrop = () => {
+      const positions = [
+        { x: window.innerWidth * 0.05 },
+        { x: window.innerWidth * 0.95 }
+      ];
+      
+      const newDrops = positions.flatMap(position => {
+        const count = 1 + Math.random(); // 1-2 drops per position
+        return Array.from({ length: count }, () => ({
+          id: Math.random(),
+          x: position.x + (Math.random() * 10 - 5),
+          y: 0,
+          speed: 2 + Math.random() * 2,
+          opacity: 0.8 + Math.random() * 0.2,
+          width: 1 + Math.random() * 2
+        }));
+      });
+      
+      setDrops(prev => [...prev, ...newDrops]);
+      
+      // Batch remove drops
+      setTimeout(() => {
+        setDrops(prev => prev.filter(d => !newDrops.includes(d)));
+      }, 8000);
+    };
+    
+    const dropInterval = setInterval(createDrop, 150); // Reduced frequency
+    
+    const animate = () => {
+      setDrops(prev => 
+        prev.map(drop => ({
+          ...drop,
+          y: drop.y + drop.speed,
+          opacity: drop.y > window.innerHeight ? 0 : drop.opacity
+        })).filter(drop => drop.opacity > 0) // Remove invisible drops
+      );
+      animationFrameRef.current = requestAnimationFrame(animate);
+    };
+    
+    animationFrameRef.current = requestAnimationFrame(animate);
+    
+    return () => {
+      clearInterval(dropInterval);
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, []);
+  
+  // Memoize the drops rendering
+  const renderedDrops = useMemo(() => (
+    drops.map(drop => (
+      <div
+        key={drop.id}
+        className="absolute"
+        style={{
+          left: `${drop.x}px`,
+          top: `${drop.y}px`,
+          width: `${drop.width}px`,
+          height: '15px',
+          opacity: drop.opacity,
+          background: 'linear-gradient(180deg, #ff0000, #660000)',
+          boxShadow: '0 0 8px #ff0000, 0 0 15px #ff0000',
+          transform: 'scaleY(2)',
+          filter: 'blur(1px) brightness(1.3)',
+          transition: 'opacity 0.1s ease-out'
+        }}
+      />
+    ))
+  ), [drops]);
+  
+  return (
+    <div className="fixed inset-0 pointer-events-none z-20">
+      {renderedDrops}
     </div>
   );
 };
