@@ -158,8 +158,8 @@ const ChatInterface = () => {
       <SkullBackground />
       
       {/* Title and Links Section */}
-      <div className="w-[90%] max-w-2xl mt-8 mb-2 z-10">
-        <h1 className="text-4xl font-bold text-green-500 text-center mb-4 tracking-wider"
+      <div className="w-[90%] max-w-2xl mt-8 mb-4 z-10">
+        <h1 className="text-4xl font-bold text-green-500 text-center mb-6 tracking-wider"
             style={{ 
               fontFamily: 'OctoberCrow, monospace',
               textShadow: '0 0 10px rgba(0, 255, 0, 0.5)'
@@ -173,7 +173,7 @@ const ChatInterface = () => {
              className="text-green-500 hover:text-green-400 transition-colors">
             <img 
               src="/dex.PNG"
-              alt="GitHub"
+              alt="dex"
               className="w-8 h-8 hover:opacity-80 transition-opacity" 
             />
           </a>
@@ -202,7 +202,7 @@ const ChatInterface = () => {
              className="text-green-500 hover:text-green-400 transition-colors">
             <img 
               src="/pump.PNG"
-              alt="Personal Website"
+              alt="pump fun"
               className="w-8 h-8 hover:opacity-80 transition-opacity" 
             />
           </a>
@@ -212,10 +212,11 @@ const ChatInterface = () => {
         <div className="text-center mb-4">
           <a
             href="/GrimbleWhitePaper.pdf"
-            download
+            target="_blank"
+            rel="noopener noreferrer"
             className="text-green-500 hover:text-green-400 underline transition-colors font-mono text-sm"
           >
-            Download Whitepaper
+            View Whitepaper
           </a>
         </div>
       </div>
