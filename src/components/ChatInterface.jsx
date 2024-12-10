@@ -183,7 +183,7 @@ const ChatInterface = () => {
              className="text-green-500 hover:text-green-400 transition-colors">
             <img 
               src="/twitter.PNG"
-              alt="LinkedIn"
+              alt="twitter"
               className="w-8 h-8 hover:opacity-80 transition-opacity" 
             />
           </a>
@@ -198,7 +198,7 @@ const ChatInterface = () => {
           </a>
           
           {/* Website */}
-          <a href="https://yourwebsite.com" target="_blank" rel="noopener noreferrer"
+          <a href="https://pump.fun/coin/6VxrPiveow91XZLnod3fYhQVpUrXFSyPkXohhb1Cpump" target="_blank" rel="noopener noreferrer"
              className="text-green-500 hover:text-green-400 transition-colors">
             <img 
               src="/pump.PNG"
@@ -227,7 +227,7 @@ const ChatInterface = () => {
         {/* Terminal Header */}
         <div className="absolute top-0 left-0 right-0 bg-green-900/20 p-2 border-b border-green-500 flex items-center">
           <Terminal className="w-5 h-5 text-green-500 mr-2" />
-          <span className="text-green-500 font-mono text-sm">CA COMING SOON</span>
+          <span className="text-green-500 font-mono text-sm">CA: 6VxrPiveow91XZLnod3fYhQVpUrXFSyPkXohhb1Cpump</span>
         </div>
 
         <div className="h-full pt-12 pb-16 flex flex-col">
