@@ -296,7 +296,7 @@ const ChatInterface = () => {
           <div 
             className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-red-500 scrollbar-track-gray-900"
             style={{
-              backgroundImage: 'url(/image.png)',
+              backgroundImage: 'url(/IMG_4117.JPEG)',
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               backgroundRepeat: 'no-repeat',

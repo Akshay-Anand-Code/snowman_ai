@@ -1,3 +1,4 @@
+import './App.css';
 import ChatInterface from './components/ChatInterface'
 
 function App() {
