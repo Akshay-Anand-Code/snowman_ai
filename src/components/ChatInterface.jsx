@@ -8,6 +8,7 @@ const ChatInterface = () => {
   const messagesEndRef = useRef(null);
   const audioRef = useRef(null);
   const [drops, setDrops] = useState([]);
+  const [isMuted, setIsMuted] = useState(false);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -47,10 +48,13 @@ const ChatInterface = () => {
 
       audioRef.current.volume = 0.3;
       audioRef.current.loop = true;
+      audioRef.current.muted = isMuted;
 
       const playAudio = async () => {
         try {
-          await audioRef.current.play();
+          if (!isMuted) {
+            await audioRef.current.play();
+          }
         } catch (err) {
           setTimeout(playAudio, 1000);
         }
@@ -67,7 +71,7 @@ const ChatInterface = () => {
     };
 
     initAudio();
-  }, []);
+  }, [isMuted]);
 
   useEffect(() => {
     const createDrop = () => {
@@ -151,8 +155,29 @@ const ChatInterface = () => {
     setIsLoading(false);
   };
 
+  const toggleMute = () => {
+    if (audioRef.current) {
+      if (isMuted) {
+        audioRef.current.muted = false;
+        audioRef.current.play();
+      } else {
+        audioRef.current.muted = true;
+        audioRef.current.pause();
+      }
+      setIsMuted(!isMuted);
+    }
+  };
+
   return (
     <div className="fixed inset-0 w-full h-full bg-gray-900 flex flex-col items-center overflow-hidden">
+      <button
+        onClick={toggleMute}
+        className="fixed top-4 right-4 z-50 p-2 bg-red-500/10 border border-red-500 text-red-500 
+                 rounded hover:bg-red-500/20 transition-colors duration-200 font-mono text-sm"
+      >
+        {isMuted ? "Unmute" : "Mute"}
+      </button>
+
       <BloodTears />
       <audio
         ref={audioRef}
