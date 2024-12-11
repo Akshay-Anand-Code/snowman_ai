@@ -227,7 +227,7 @@ const ChatInterface = () => {
             />
           </a>
           
-          <a href="https://x.com/grimbleITX/" 
+          <a href="https://x.com/VarnEngine" 
              target="_blank" 
              rel="noopener noreferrer"
              className="text-green-500 hover:text-green-400 transition-colors">
@@ -242,7 +242,7 @@ const ChatInterface = () => {
             />
           </a>
 
-          <a href="https://t.me/grimblesgraveyard" 
+          <a href="https://t.me/thewovenwoods" 
              target="_blank" 
              rel="noopener noreferrer"
              className="text-green-500 hover:text-green-400 transition-colors">
