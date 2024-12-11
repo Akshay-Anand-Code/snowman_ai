@@ -237,7 +237,7 @@ const ChatInterface = () => {
         </h1>
         
         <div className="flex justify-center gap-8 mb-2">
-          <a href="https://dexscreener.com/solana/gthyxioptpqnhyvz4utqzhtanrp25gqavixg5kystnkk" 
+          <a href="https://dexscreener.com" 
              target="_blank" 
              rel="noopener noreferrer"
              className="text-green-500 hover:text-green-400 transition-colors">
@@ -282,7 +282,7 @@ const ChatInterface = () => {
             />
           </a>
           
-          <a href="https://pump.fun/coin/6VxrPiveow91XZLnod3fYhQVpUrXFSyPkXohhb1Cpump" 
+          <a href="https://pump.fun" 
              target="_blank" 
              rel="noopener noreferrer"
              className="text-green-500 hover:text-green-400 transition-colors">
