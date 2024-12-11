@@ -282,7 +282,7 @@ const ChatInterface = () => {
             />
           </a>
           
-          <a href="https://pump.fun" 
+          <a href="https://pump.fun/coin/7KHTs1SMQzKEm9vt2VJanpkpDfur4kB7nFGgTfp6pump" 
              target="_blank" 
              rel="noopener noreferrer"
              className="text-green-500 hover:text-green-400 transition-colors">
@@ -314,7 +314,7 @@ const ChatInterface = () => {
                     shadow-lg shadow-red-500/20 overflow-hidden backdrop-blur-sm z-10">
         <div className="absolute top-0 left-0 right-0 bg-red-900/20 p-2 border-b border-red-500 flex items-center">
           <Terminal className="w-5 h-5 text-red-500 mr-2" />
-          <span className="text-red-500 font-mono text-sm">CA: COMING SOON</span>
+          <span className="text-red-500 font-mono text-sm">CA: 7KHTs1SMQzKEm9vt2VJanpkpDfur4kB7nFGgTfp6pump</span>
         </div>
 
         <div className="h-full pt-12 pb-16 flex flex-col">
