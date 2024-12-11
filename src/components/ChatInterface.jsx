@@ -191,38 +191,41 @@ const ChatInterface = () => {
       </audio>
 
       {/* Background Video Container */}
-      <div className="absolute inset-0 flex">
-        {/* Left Video */}
-        <div className="w-1/2 h-full overflow-hidden">
-          <video
-            autoPlay
-            loop
-            muted
-            className="w-full h-full object-cover"
-            style={{ 
-              transform: 'scaleX(-1)', // Mirror the left video
-              filter: 'grayscale(100%)' // Black and white filter
-            }}
-          >
-            <source src="/ascii.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-        </div>
-        
-        {/* Right Video */}
-        <div className="w-1/2 h-full overflow-hidden">
-          <video
-            autoPlay
-            loop
-            muted
-            className="w-full h-full object-cover"
-            style={{ 
-              filter: 'grayscale(100%)' // Black and white filter
-            }}
-          >
-            <source src="/ascii.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
+      <div className="absolute inset-0">
+        {/* Main video container */}
+        <div className="relative w-full h-full">
+          {/* Left side */}
+          <div className="absolute left-0 top-0 w-1/2 h-full overflow-hidden">
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="w-full h-full object-cover"
+              style={{ 
+                filter: 'grayscale(100%)',
+                transform: 'scaleX(-1)',  // Mirror the left side
+              }}
+            >
+              <source src="/ascii.mp4" type="video/mp4" />
+            </video>
+          </div>
+          
+          {/* Right side */}
+          <div className="absolute right-0 top-0 w-1/2 h-full overflow-hidden">
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="w-full h-full object-cover"
+              style={{ 
+                filter: 'grayscale(100%)',
+              }}
+            >
+              <source src="/ascii.mp4" type="video/mp4" />
+            </video>
+          </div>
         </div>
       </div>
       
