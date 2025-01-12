@@ -4,19 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"vite\" \"node server-new.js\"",
+    "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "server": "node server-new.js"
+    "preview": "vite preview"
   },
   "dependencies": {
-    "concurrently": "^9.1.2",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.7",
-    "express": "^4.21.2",
     "lucide-react": "^0.468.0",
-    "openai": "^4.78.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
