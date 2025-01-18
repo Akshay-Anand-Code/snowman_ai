@@ -8,6 +8,8 @@ const ChatInterface = () => {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
   const [snowflakes, setSnowflakes] = useState([]);
+  const MAX_SNOWFLAKES = 50; // Limit total snowflakes
+  const SPAWN_INTERVAL = 200; // Increase interval between spawns
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -86,59 +88,64 @@ const ChatInterface = () => {
   }, []);
   
   useEffect(() => {
+    let animationFrameId;
+    
     const animate = () => {
       setDrops(prev => prev.map(drop => ({
         ...drop,
         y: drop.y + drop.speed,
         opacity: drop.y > window.innerHeight ? 0 : drop.opacity
       })));
-      requestAnimationFrame(animate);
+      
+      animationFrameId = requestAnimationFrame(animate);
     };
     
-    const animation = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animation);
+    animationFrameId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationFrameId);
   }, []);
 
   useEffect(() => {
     const createSnowflake = () => {
-      return {
+      // Only create new snowflakes if under limit
+      if (snowflakes.length >= MAX_SNOWFLAKES) return;
+      
+      const newFlake = {
         id: Math.random(),
         x: Math.random() * window.innerWidth,
         y: -10,
-        size: Math.random() * 4 + 2,
-        speed: Math.random() * 2 + 1,
-        wobble: Math.random() * 3 - 1.5
+        size: Math.random() * 3 + 1,
+        speedY: Math.random() * 1 + 0.5, // Reduced speed range
+        speedX: Math.random() * 0.5 - 0.25 // Gentle horizontal drift
       };
+      
+      setSnowflakes(prev => [...prev, newFlake]);
+      
+      // Remove snowflake after it falls
+      setTimeout(() => {
+        setSnowflakes(prev => prev.filter(flake => flake.id !== newFlake.id));
+      }, 8000);
     };
+    
+    const interval = setInterval(createSnowflake, SPAWN_INTERVAL);
+    return () => clearInterval(interval);
+  }, [snowflakes.length]);
 
-    // More initial snowflakes
-    const initialSnowflakes = Array.from({ length: 100 }, createSnowflake);
-    setSnowflakes(initialSnowflakes);
-
-    const moveSnowflakes = () => {
-      setSnowflakes(prev => prev.map(flake => {
-        const newY = flake.y + flake.speed;
-        const newX = flake.x + Math.sin(newY * 0.02) * flake.wobble;
-
-        if (newY > window.innerHeight) {
-          return createSnowflake();
-        }
-
-        return { ...flake, y: newY, x: newX };
-      }));
+  // Use requestAnimationFrame for smooth animation
+  useEffect(() => {
+    let animationFrameId;
+    
+    const animate = () => {
+      setSnowflakes(prev => prev.map(flake => ({
+        ...flake,
+        y: flake.y + flake.speedY,
+        x: flake.x + flake.speedX
+      })));
+      
+      animationFrameId = requestAnimationFrame(animate);
     };
-
-    const animationFrame = setInterval(moveSnowflakes, 16);
-
-    // Add new snowflakes more frequently
-    const snowflakeInterval = setInterval(() => {
-      setSnowflakes(prev => [...prev, createSnowflake()]);
-    }, 100);
-
-    return () => {
-      clearInterval(animationFrame);
-      clearInterval(snowflakeInterval);
-    };
+    
+    animationFrameId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationFrameId);
   }, []);
 
   const sendMessage = async (e) => {
@@ -189,14 +196,12 @@ const ChatInterface = () => {
             key={flake.id}
             className="absolute rounded-full bg-white"
             style={{
-              left: `${flake.x}px`,
-              top: `${flake.y}px`,
               width: `${flake.size}px`,
               height: `${flake.size}px`,
-              opacity: Math.random() * 0.3 + 0.7,
-              filter: 'blur(0.5px)',
+              opacity: 0.7,
+              transform: `translate(${flake.x}px, ${flake.y}px)`,
               transition: 'transform 0.1s linear',
-              boxShadow: '0 0 2px rgba(255, 255, 255, 0.8)'
+              willChange: 'transform'
             }}
           />
         ))}
