@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
-import { Send, Terminal, Globe } from 'lucide-react';
+import { Send, Terminal, Globe, Twitter } from 'lucide-react';
 import { getChatResponse } from '../services/openai';
 
 const ChatInterface = () => {
@@ -7,6 +7,7 @@ const ChatInterface = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
+  const [snowflakes, setSnowflakes] = useState([]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -98,6 +99,48 @@ const ChatInterface = () => {
     return () => cancelAnimationFrame(animation);
   }, []);
 
+  useEffect(() => {
+    const createSnowflake = () => {
+      return {
+        id: Math.random(),
+        x: Math.random() * window.innerWidth,
+        y: -10,
+        size: Math.random() * 4 + 2,
+        speed: Math.random() * 2 + 1,
+        wobble: Math.random() * 3 - 1.5
+      };
+    };
+
+    // More initial snowflakes
+    const initialSnowflakes = Array.from({ length: 100 }, createSnowflake);
+    setSnowflakes(initialSnowflakes);
+
+    const moveSnowflakes = () => {
+      setSnowflakes(prev => prev.map(flake => {
+        const newY = flake.y + flake.speed;
+        const newX = flake.x + Math.sin(newY * 0.02) * flake.wobble;
+
+        if (newY > window.innerHeight) {
+          return createSnowflake();
+        }
+
+        return { ...flake, y: newY, x: newX };
+      }));
+    };
+
+    const animationFrame = setInterval(moveSnowflakes, 16);
+
+    // Add new snowflakes more frequently
+    const snowflakeInterval = setInterval(() => {
+      setSnowflakes(prev => [...prev, createSnowflake()]);
+    }, 100);
+
+    return () => {
+      clearInterval(animationFrame);
+      clearInterval(snowflakeInterval);
+    };
+  }, []);
+
   const sendMessage = async (e) => {
     e.preventDefault();
     if (!inputMessage.trim()) return;
@@ -126,82 +169,69 @@ const ChatInterface = () => {
 
   return (
     <div className="fixed inset-0 w-full h-full bg-gray-900 flex flex-col items-center overflow-hidden">
-      <div className="absolute inset-0 flex bg-black">
-        <div className="w-full h-full flex items-center justify-center">
+      <div className="absolute inset-0 flex">
+        <div className="w-full h-full">
           <img
-            src="/raine.gif"
+            src="/chri.jpg"
             alt="Background"
-            className="h-full w-auto max-w-none"
+            className="w-full h-full object-cover"
             style={{ 
               opacity: 0.8,
+              objectPosition: 'center 30%' // Adjust this value to control vertical focus
             }}
           />
         </div>
       </div>
-      
-      <div className="w-[90%] max-w-2xl mt-8 mb-4 z-10">
-        <h1 className="text-4xl font-bold text-white text-center mb-6 tracking-wider"
-            style={{ 
-              fontFamily: 'OctoberCrow, monospace',
-              textShadow: '0 0 10px rgba(255, 255, 255, 0.5)'
-            }}>
-          rAIne
-        </h1>
-        
-        <div className="flex justify-center gap-8 mb-2">
-          <a href="https://dexscreener.com" 
-             target="_blank" 
-             rel="noopener noreferrer"
-             className="text-green-500 hover:text-green-400 transition-colors">
-            <img 
-              src="/dex.PNG"
-              alt="dex"
-              className="w-8 h-8 hover:opacity-80 transition-opacity" 
-              style={{ 
-                filter: 'sepia(100%) hue-rotate(-50deg) saturate(200%) brightness(0.8)',
-                boxShadow: '0 0 10px rgba(255, 0, 0, 0.5)'
-              }}
-            />
-          </a>
-          
-          <a href="https://x.com" 
-             target="_blank" 
-             rel="noopener noreferrer"
-             className="text-green-500 hover:text-green-400 transition-colors">
-            <img 
-              src="/twitter.PNG"
-              alt="twitter"
-              className="w-8 h-8 hover:opacity-80 transition-opacity"
-              style={{ 
-                filter: 'sepia(100%) hue-rotate(-50deg) saturate(200%) brightness(0.8)',
-                boxShadow: '0 0 10px rgba(255, 0, 0, 0.5)'
-              }}
-            />
-          </a>
 
-          <a href="https://t.me/" 
+      <div className="fixed inset-0 pointer-events-none z-10">
+        {snowflakes.map(flake => (
+          <div
+            key={flake.id}
+            className="absolute rounded-full bg-white"
+            style={{
+              left: `${flake.x}px`,
+              top: `${flake.y}px`,
+              width: `${flake.size}px`,
+              height: `${flake.size}px`,
+              opacity: Math.random() * 0.3 + 0.7,
+              filter: 'blur(0.5px)',
+              transition: 'transform 0.1s linear',
+              boxShadow: '0 0 2px rgba(255, 255, 255, 0.8)'
+            }}
+          />
+        ))}
+      </div>
+
+      <div className="w-full px-6 py-4 flex justify-between items-center z-20">
+        <h1 className="text-5xl font-bold text-white tracking-wider"
+            style={{ 
+              fontFamily: "'Mountains of Christmas', cursive",
+              textShadow: '0 0 10px rgba(255, 0, 0, 0.5)',
+              color: '#ff0000'
+            }}>
+          Santa
+        </h1>
+
+        <div className="flex gap-4 items-center">
+          <a href="https://twitter.com/varndev" 
              target="_blank" 
              rel="noopener noreferrer"
-             className="text-green-500 hover:text-green-400 transition-colors">
-            <img 
-              src="/telegram.PNG"
-              alt="Telegram"
-              className="w-8 h-8 hover:opacity-80 transition-opacity"
-              style={{ 
-                filter: 'sepia(100%) hue-rotate(-50deg) saturate(200%) brightness(0.8)',
-                boxShadow: '0 0 10px rgba(255, 0, 0, 0.5)'
-              }}
-            />
+             className="text-red-500 hover:text-red-400 transition-colors">
+            <Twitter className="w-6 h-6" />
           </a>
-          
+          <a href="https://t.me/varndev" 
+             target="_blank" 
+             rel="noopener noreferrer"
+             className="text-red-500 hover:text-red-400 transition-colors">
+            <Send className="w-6 h-6" />
+          </a>
           <a href="https://pump.fun" 
              target="_blank" 
-             rel="noopener noreferrer"
-             className="text-green-500 hover:text-green-400 transition-colors">
+             rel="noopener noreferrer">
             <img 
               src="/pump.PNG"
               alt="pump fun"
-              className="w-8 h-8 hover:opacity-80 transition-opacity"
+              className="w-6 h-6 hover:opacity-80 transition-opacity"
               style={{ 
                 filter: 'sepia(100%) hue-rotate(-50deg) saturate(200%) brightness(0.8)',
                 boxShadow: '0 0 10px rgba(255, 0, 0, 0.5)'
@@ -210,8 +240,8 @@ const ChatInterface = () => {
           </a>
         </div>
       </div>
-      
-      <div className="relative w-[90%] max-w-2xl h-[70vh] bg-black/90 rounded-lg border border-red-500 
+
+      <div className="relative w-[90%] max-w-2xl h-[85vh] bg-black/90 rounded-lg border border-red-500 
                     shadow-lg shadow-red-500/20 overflow-hidden backdrop-blur-sm z-10">
         <div className="absolute top-0 left-0 right-0 bg-red-900/20 p-2 border-b border-red-500 flex items-center">
           <Terminal className="w-5 h-5 text-red-500 mr-2" />
@@ -228,13 +258,13 @@ const ChatInterface = () => {
             <div
               className="absolute inset-0 -z-10"
               style={{
-                backgroundImage: 'url(/raine.jpg)',
+                backgroundImage: 'url(/santa.jpg)',
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat',
                 backgroundBlendMode: 'overlay',
-                filter: 'blur(2px)',
-                opacity: 0.5
+                filter: 'blur(1px)',
+                opacity: 0.6
               }}
             />
             
@@ -274,7 +304,7 @@ const ChatInterface = () => {
                 type="text"
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
-                placeholder="Talk with rAIne..."
+                placeholder="Talk with Santa..."
                 className="flex-1 p-2 rounded bg-black/80 border border-red-500/50 
                          text-red-500 placeholder-red-700 font-mono text-sm
                          focus:outline-none focus:border-red-400 focus:ring-1 focus:ring-red-500"
