@@ -152,7 +152,7 @@ const ChatInterface = () => {
     try {
       const response = await getChatResponse(inputMessage);
       setMessages(prev => [...prev, {
-        user: 'rAIne',
+        user: 'Frosty',
         text: response
       }]);
     } catch (error) {
