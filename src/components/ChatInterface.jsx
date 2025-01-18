@@ -213,13 +213,13 @@ const ChatInterface = () => {
         </h1>
 
         <div className="flex gap-4 items-center">
-          <a href="https://twitter.com/varndev" 
+          <a href="https://twitter.com" 
              target="_blank" 
              rel="noopener noreferrer"
              className="text-red-500 hover:text-red-400 transition-colors">
             <Twitter className="w-6 h-6" />
           </a>
-          <a href="https://t.me/varndev" 
+          <a href="https://t.me" 
              target="_blank" 
              rel="noopener noreferrer"
              className="text-red-500 hover:text-red-400 transition-colors">
