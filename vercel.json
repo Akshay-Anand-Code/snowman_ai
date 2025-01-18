@@ -4,5 +4,13 @@
       "source": "/api/:path*",
       "destination": "/api/:path*"
     }
-  ]
+  ],
+  "functions": {
+    "api/**/*": {
+      "runtime": "edge"
+    }
+  },
+  "buildCommand": "pnpm run build",
+  "outputDirectory": "dist",
+  "public": true
 } 
