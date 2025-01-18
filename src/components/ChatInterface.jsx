@@ -209,7 +209,7 @@ const ChatInterface = () => {
               textShadow: '0 0 10px rgba(255, 0, 0, 0.5)',
               color: '#ff0000'
             }}>
-          Santa
+          Frosty
         </h1>
 
         <div className="flex gap-4 items-center">
@@ -280,7 +280,7 @@ const ChatInterface = () => {
                 <div className={`font-mono text-sm mb-1 ${
                   message.user === 'User' ? 'text-gray-200' : 'text-red-300'
                 }`}>
-                  {message.user === 'User' ? '> User' : '$ rAIne'}
+                  {message.user === 'User' ? '> User' : '$ Frosty'}
                 </div>
                 <div className={`font-mono break-words ${
                   message.user === 'User' ? 'text-white' : 'text-red-500'
@@ -304,7 +304,7 @@ const ChatInterface = () => {
                 type="text"
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
-                placeholder="Talk with Santa..."
+                placeholder="Talk with Frosty..."
                 className="flex-1 p-2 rounded bg-black/80 border border-red-500/50 
                          text-red-500 placeholder-red-700 font-mono text-sm
                          focus:outline-none focus:border-red-400 focus:ring-1 focus:ring-red-500"
