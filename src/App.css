@@ -42,12 +42,12 @@
 }
 
 body {
-  cursor: url('/path/to/bat-cursor.png'), auto;
+  cursor: auto;
 }
 
 .glitter-bat {
   position: absolute;
-  width: 20px; /* Adjust size as needed */
+  width: 20px;
   height: 20px;
   background: url('/symbol.png') no-repeat center center;
   background-size: contain;
@@ -103,21 +103,4 @@ body {
   position: fixed;
   pointer-events: none;
   user-select: none;
-}
-
-@keyframes snowfall {
-  0% {
-    transform: translateY(-10px);
-  }
-  100% {
-    transform: translateY(100vh);
-  }
-}
-
-.snowflake {
-  position: absolute;
-  background: white;
-  border-radius: 50%;
-  pointer-events: none;
-  filter: blur(1px);
 }
