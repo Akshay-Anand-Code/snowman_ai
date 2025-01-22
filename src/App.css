@@ -1,8 +1,9 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+  margin: 0;
+  padding: 0;
   text-align: center;
+  width: 100%;
+  min-height: 100vh;
 }
 
 .logo {
@@ -44,8 +45,6 @@
 body {
   cursor: auto;
 }
-
-
 
 @keyframes fadeOut {
   0% {
@@ -94,4 +93,48 @@ body {
   position: fixed;
   pointer-events: none;
   user-select: none;
+}
+
+@keyframes slide {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.animate-slide {
+  animation: slide 20s linear infinite;
+  display: flex;
+  width: max-content; /* Allows the container to be as wide as needed */
+}
+
+/* Optional: Add hover effect to pause animation */
+.animate-slide:hover {
+  animation-play-state: paused;
+}
+
+@keyframes pulse {
+  0% {
+    text-shadow: 
+      0 0 10px rgba(255, 0, 0, 0.8),
+      0 0 20px rgba(255, 0, 0, 0.8),
+      0 0 30px rgba(255, 0, 0, 0.6),
+      0 0 40px rgba(255, 0, 0, 0.4);
+  }
+  50% {
+    text-shadow: 
+      0 0 20px rgba(255, 0, 0, 0.8),
+      0 0 30px rgba(255, 0, 0, 0.8),
+      0 0 40px rgba(255, 0, 0, 0.6),
+      0 0 50px rgba(255, 0, 0, 0.4);
+  }
+  100% {
+    text-shadow: 
+      0 0 10px rgba(255, 0, 0, 0.8),
+      0 0 20px rgba(255, 0, 0, 0.8),
+      0 0 30px rgba(255, 0, 0, 0.6),
+      0 0 40px rgba(255, 0, 0, 0.4);
+  }
 }
